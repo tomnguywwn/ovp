@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Hanoi Convenience Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    html, body, #app, #map { height: 100%; margin: 0; padding: 0; }
+    #app { display: flex; }
+    #map { flex: 1; background: #f0f0f0; }
+    #sidebar { width: 320px; max-width: 40%; background: #fff; border-left: 1px solid #ccc; padding: 10px; overflow: auto; }
+    #stores { list-style: none; padding: 0; margin: 0; }
+    #stores li { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+    #stores li:hover { background: #f6f6f6; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="map"></div>
+    <div id="sidebar">
+      <h2>Stores (click map to search)</h2>
+      <ul id="stores"></ul>
+      <div id="info"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-o9N1j7k4gJzv1hYq0Q2qv6K6m4jQ0f5JQ+f9vPyD2Jo=" crossorigin=""></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

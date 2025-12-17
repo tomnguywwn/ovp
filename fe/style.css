@@ -1,0 +1,14 @@
+html,body,#app,#map { height: 100%; margin:0; padding:0; }
+#app { display:flex; }
+#map { flex:1; }
+#sidebar {
+  width:320px;
+  max-width:40%;
+  background:#fff;
+  border-left:1px solid #ccc;
+  padding:10px;
+  overflow:auto;
+}
+#stores { list-style:none; padding:0; margin:0; }
+#stores li { padding:8px; border-bottom:1px solid #eee; cursor:pointer; }
+#stores li:hover { background:#f6f6f6; }
