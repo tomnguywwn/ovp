@@ -70,10 +70,29 @@ async def nearby(lat: float = Query(...), lon: float = Query(...), radius: int =
         if lat_e is None or lon_e is None:
             continue
         name = props.get("name") or props.get("brand") or "Unnamed convenience"
+        # extract address components if present
+        housenumber = props.get("addr:housenumber") or props.get("housenumber")
+        street = props.get("addr:street") or props.get("street")
+        addr_full = props.get("addr:full")
+        if not addr_full:
+            if housenumber or street:
+                addr_full = f"{housenumber or ''} {street or ''}".strip()
+            else:
+                addr_full = ""
+
+        # Build properties: include friendly fields and keep original tags under 'tags'
+        properties = {"name": name, "address": addr_full}
+        if housenumber:
+            properties["housenumber"] = housenumber
+        if street:
+            properties["street"] = street
+        # keep original OSM tags accessible
+        properties["tags"] = props
+
         feature = {
             "type": "Feature",
             "geometry": {"type": "Point", "coordinates": [lon_e, lat_e]},
-            "properties": {"name": name, **props},
+            "properties": properties,
         }
         features.append(feature)
 

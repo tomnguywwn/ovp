@@ -16,6 +16,16 @@ document.addEventListener('DOMContentLoaded', function() {
   
   console.log('Map initialized');
 
+  // Red marker icon for origin
+  const redIcon = L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
   let originMarker = null;
   let originLatLng = null;
   let searchCircle = null;
@@ -31,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Map clicked at', e.latlng);
     originLatLng = e.latlng;
     if (originMarker) originMarker.setLatLng(originLatLng);
-    else originMarker = L.marker(originLatLng, {draggable:false}).addTo(map).bindPopup('Origin').openPopup();
+    else originMarker = L.marker(originLatLng, {draggable:false, icon:redIcon}).addTo(map).bindPopup('Origin').openPopup();
 
     // draw 1km circle
     if (searchCircle) searchCircle.setLatLng(originLatLng);
@@ -52,6 +62,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // simple html-escape helper
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function renderStores(features) {
     console.log('Rendering', features.length, 'stores');
     storeLayer.clearLayers();
@@ -66,11 +87,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const coords = f.geometry.coordinates; // [lon, lat]
       const latlng = L.latLng(coords[1], coords[0]);
       const name = f.properties.name || 'Unnamed';
-      const marker = L.marker(latlng).addTo(storeLayer).bindPopup(name);
+      // address may be in properties.address or under tags
+      const address = f.properties.address || (f.properties.tags && (f.properties.tags['addr:full'] || ((f.properties.tags['addr:housenumber'] || '') + ' ' + (f.properties.tags['addr:street'] || '')).trim())) || '';
 
-      // list item
+      const popupHtml = `<strong>${escapeHtml(name)}</strong>${address ? '<br/>' + escapeHtml(address) : ''}`;
+      const marker = L.marker(latlng).addTo(storeLayer).bindPopup(popupHtml);
+
+      // list item with name + address
       const li = document.createElement('li');
-      li.textContent = name;
+      li.innerHTML = `<div class="store-name">${escapeHtml(name)}</div>${address ? `<div class="store-address" style="font-size:0.9em;color:#555;">${escapeHtml(address)}</div>` : ''}`;
       li.onclick = () => {
         if (!originLatLng) {
           alert('Click the map to pick an origin first.');
